@@ -7,13 +7,16 @@ Game = require("game")
 Basics = require("libs/basics")
 
 function love.load()
-	Basics:initGraphics({640,480},'landscape',false,3,false)
+	Basics:initGraphics({480,432},'landscape',false,3,true)
 end
 
 function love.update(dt)
 end
 
 function love.draw()
+	Cam:attach()
+		-- Graphics go here to scale it
+	Cam:detach()
 end
 
 function love.keypressed(key, scancode, isrepeat)
