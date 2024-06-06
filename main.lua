@@ -36,7 +36,7 @@ function love.draw()
     
     Cam:detach()
 
-    love.graphics.draw(Mouse, love.mouse.getX(), love.mouse.getY(), nil, Scale,Scale)
+    love.graphics.draw(Mouse, love.mouse.getX(), love.mouse.getY(), nil, Scale,Scale, Mouse:getWidth()/2, Mouse:getHeight()/2)
 end
 
 function love.keypressed(key, scancode, isrepeat)

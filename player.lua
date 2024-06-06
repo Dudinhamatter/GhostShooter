@@ -10,10 +10,9 @@ function Player:new(world, x, y)
     local this = {
         x = x,
         y = y,
-        speed = 40,
-        acceleration = 200,
-        deceleration = 100,
-        maxSpeed = 100,
+        acceleration = 100,
+        deceleration = 50,
+        maxSpeed = 50,
         velocity = {x = 0, y = 0},
         spriteSheet = love.graphics.newImage('assets/sprites/player/ghost.png'),
         gunImage = love.graphics.newImage('assets/sprites/player/gun.png'),
@@ -70,7 +69,7 @@ function Player:update(dt)
     -- Flip and rotate towards the mouse
     local mx, my = love.mouse.getPosition()
     mx, my = Cam:worldCoords(mx, my)
-    local angle = math.atan2(((my+2) - self.y), (mx - self.x))
+    local angle = math.atan2(((my-2.5) - self.y), ((mx-4) - self.x))
     self.isFlipped = mx < self.x
     self.gunAngle = angle
 end
