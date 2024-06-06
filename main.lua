@@ -6,8 +6,10 @@ Game = require("game")
 -- Libraries
 Basics = require("libs/basics")
 
+Scale = 3
+
 function love.load()
-	Basics:initGraphics({480,432},'landscape',false,3,true)
+	Basics:initGraphics({480,432},'landscape',false,Scale,true)
 end
 
 function love.update(dt)
