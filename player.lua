@@ -11,6 +11,10 @@ function Player:new(world, x, y)
         x = x,
         y = y,
         speed = 40,
+        acceleration = 200,
+        deceleration = 100,
+        maxSpeed = 100,
+        velocity = {x = 0, y = 0},
         spriteSheet = love.graphics.newImage('assets/sprites/player/ghost.png'),
         gunImage = love.graphics.newImage('assets/sprites/player/gun.png'),
         isFlipped = false,
@@ -26,21 +30,47 @@ function Player:new(world, x, y)
 end
 
 function Player:update(dt)
-    local dx, dy = 0, 0
-    if love.keyboard.isDown('w') then dy = -self.speed * dt end
-    if love.keyboard.isDown('s') then dy = self.speed * dt end
-    if love.keyboard.isDown('a') then dx = -self.speed * dt end
-    if love.keyboard.isDown('d') then dx = self.speed * dt end
+    local ax, ay = 0, 0
+    if love.keyboard.isDown('w') then ay = -self.acceleration end
+    if love.keyboard.isDown('s') then ay = self.acceleration end
+    if love.keyboard.isDown('a') then ax = -self.acceleration end
+    if love.keyboard.isDown('d') then ax = self.acceleration end
 
-    self.x, self.y, collisions, len = self.world:move(self, self.x + dx, self.y + dy)
-    if dx ~= 0 or dy ~= 0 then
+    self.velocity.x = self.velocity.x + ax * dt
+    self.velocity.y = self.velocity.y + ay * dt
+
+    -- Apply deceleration when no input
+    if ax == 0 then
+        if self.velocity.x > 0 then
+            self.velocity.x = math.max(0, self.velocity.x - self.deceleration * dt)
+        elseif self.velocity.x < 0 then
+            self.velocity.x = math.min(0, self.velocity.x + self.deceleration * dt)
+        end
+    end
+
+    if ay == 0 then
+        if self.velocity.y > 0 then
+            self.velocity.y = math.max(0, self.velocity.y - self.deceleration * dt)
+        elseif self.velocity.y < 0 then
+            self.velocity.y = math.min(0, self.velocity.y + self.deceleration * dt)
+        end
+    end
+
+    -- Clamp velocity to max speed
+    self.velocity.x = math.max(-self.maxSpeed, math.min(self.maxSpeed, self.velocity.x))
+    self.velocity.y = math.max(-self.maxSpeed, math.min(self.maxSpeed, self.velocity.y))
+
+    -- Update position
+    self.x, self.y, collisions, len = self.world:move(self, self.x + self.velocity.x * dt, self.y + self.velocity.y * dt)
+
+    if self.velocity.x ~= 0 or self.velocity.y ~= 0 then
         self.animations.walk:update(dt)
     end
 
     -- Flip and rotate towards the mouse
     local mx, my = love.mouse.getPosition()
     mx, my = Cam:worldCoords(mx, my)
-    local angle = math.atan2(((my-3) - self.y), (mx-4 - self.x))
+    local angle = math.atan2(((my+2) - self.y), (mx - self.x))
     self.isFlipped = mx < self.x
     self.gunAngle = angle
 end
