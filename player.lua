@@ -10,7 +10,7 @@ function Player:new(world, x, y)
     local this = {
         x = x,
         y = y,
-        speed = 40, -- Updated speed
+        speed = 40,
         spriteSheet = love.graphics.newImage('assets/sprites/player/ghost.png'),
         gunImage = love.graphics.newImage('assets/sprites/player/gun.png'),
         isFlipped = false,
@@ -18,7 +18,7 @@ function Player:new(world, x, y)
     }
     this.grid = anim8.newGrid(15, 16, this.spriteSheet:getWidth(), this.spriteSheet:getHeight())
     this.animations = {
-        walk = anim8.newAnimation(this.grid('1-2', 1), 0.1)
+        walk = anim8.newAnimation(this.grid('1-2', 1), 0.2)
     }
     world:add(this, x, y, 15, 16)
     setmetatable(this, Player)

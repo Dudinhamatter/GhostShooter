@@ -1,5 +1,5 @@
 love.graphics.setDefaultFilter("nearest", "nearest")
-love.graphics.setBackgroundColor(0, .3, .3)
+love.graphics.setBackgroundColor(0, 0, 0)
 
 Game = require("game")
 
