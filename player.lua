@@ -40,7 +40,7 @@ function Player:update(dt)
     -- Flip and rotate towards the mouse
     local mx, my = love.mouse.getPosition()
     mx, my = Cam:worldCoords(mx, my)
-    local angle = math.atan2((my - self.y), (mx - self.x))
+    local angle = math.atan2(((my-3) - self.y), (mx-4 - self.x))
     self.isFlipped = mx < self.x
     self.gunAngle = angle
 end
