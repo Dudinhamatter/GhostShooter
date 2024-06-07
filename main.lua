@@ -46,3 +46,9 @@ function love.keypressed(key, scancode, isrepeat)
         Basics.fullscreen()
     end
 end
+
+function love.mousepressed(x, y, button, istouch, presses)
+    if button == 1 then
+        player:shoot()
+    end
+end

@@ -2,12 +2,14 @@
 local anim8 = require 'libs/anim8'
 local bump = require 'libs/bump'
 local Basics = require 'libs/basics'
+local Bullet = require 'bullet'
 
 local Player = {}
 Player.__index = Player
 
 function Player:new(world, x, y)
     local this = {
+        type='player',
         x = x,
         y = y,
         acceleration = 100,
@@ -17,7 +19,8 @@ function Player:new(world, x, y)
         spriteSheet = love.graphics.newImage('assets/sprites/player/ghost.png'),
         gunImage = love.graphics.newImage('assets/sprites/player/gun.png'),
         isFlipped = false,
-        world = world
+        world = world,
+        bullets = {}
     }
     this.grid = anim8.newGrid(15, 16, this.spriteSheet:getWidth(), this.spriteSheet:getHeight())
     this.animations = {
@@ -60,7 +63,7 @@ function Player:update(dt)
     self.velocity.y = math.max(-self.maxSpeed, math.min(self.maxSpeed, self.velocity.y))
 
     -- Update position
-    self.x, self.y, collisions, len = self.world:move(self, self.x + self.velocity.x * dt, self.y + self.velocity.y * dt)
+    self.x, self.y, collisions, len = self.world:move(self, self.x + self.velocity.x * dt, self.y + self.velocity.y * dt,self.filter)
 
     if self.velocity.x ~= 0 or self.velocity.y ~= 0 then
         self.animations.walk:update(dt)
@@ -72,6 +75,15 @@ function Player:update(dt)
     local angle = math.atan2(((my-2.5) - self.y), ((mx-4) - self.x))
     self.isFlipped = mx < self.x
     self.gunAngle = angle
+
+    -- Bullet
+    for i = #self.bullets, 1, -1 do
+        local bullet = self.bullets[i]
+        bullet:update(dt)
+        if not bullet.isAlive then
+            table.remove(self.bullets, i)
+        end
+    end
 end
 
 function Player:draw()
@@ -82,6 +94,23 @@ function Player:draw()
     local gunOffsetX = self.isFlipped and -4.5 or 4.5
     local gunOffsetY = 3.5
     love.graphics.draw(self.gunImage, self.x+4, self.y+3,  self.gunAngle+(math.rad(180)*(scaleX-1)), 1, scaleX, 4.5, 3.5)
+
+    for _, bullet in ipairs(self.bullets) do
+        bullet:draw()
+    end
+end
+
+
+function Player:shoot()
+    local bullet = Bullet:new(self.world, self.x + 4 + math.cos(self.gunAngle), self.y + 2 + math.sin(self.gunAngle), self.gunAngle)
+    table.insert(self.bullets, bullet)
+end
+
+function Player:filter(other)
+    if other.type == 'bullet' then
+        return 'cross'
+    end
+    return 'slide'
 end
 
 return Player
