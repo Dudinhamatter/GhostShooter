@@ -27,7 +27,7 @@ function Bullet:update(dt)
     self.x, self.y, collisions, len = self.world:move(self, self.x + dx, self.y + dy, self.filter)
 
     -- Check if the bullet is outside the screen
-    if self.x < -160/2 or self.y < -144/2 or self.x > 160/2 or self.y > 144/2 then
+    if self.x < (-160/2)+6 or self.y < (-144/2)+6 or self.x > (160/2)-6 or self.y > (144/2)-6 then
         self:destroy()
     end
 end

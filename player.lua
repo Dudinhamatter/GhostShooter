@@ -62,8 +62,29 @@ function Player:update(dt)
     self.velocity.x = math.max(-self.maxSpeed, math.min(self.maxSpeed, self.velocity.x))
     self.velocity.y = math.max(-self.maxSpeed, math.min(self.maxSpeed, self.velocity.y))
 
+    -- Calculate potential new position
+    local newX = self.x + self.velocity.x * dt
+    local newY = self.y + self.velocity.y * dt
+
+    -- Boundary checks
+    if newX < -80 + 13 then
+        newX = -80 + 13
+        self.velocity.x = 0
+    elseif newX > 80 - 13 then
+        newX = 80 - 13
+        self.velocity.x = 0
+    end
+
+    if newY < -72 + 14 then
+        newY = -72 + 14
+        self.velocity.y = 0
+    elseif newY > 72 - 14 then
+        newY = 72 - 14
+        self.velocity.y = 0
+    end
+
     -- Update position
-    self.x, self.y, collisions, len = self.world:move(self, self.x + self.velocity.x * dt, self.y + self.velocity.y * dt,self.filter)
+    self.x, self.y, collisions, len = self.world:move(self, newX, newY, self.filter)
 
     if self.velocity.x ~= 0 or self.velocity.y ~= 0 then
         self.animations.walk:update(dt)
